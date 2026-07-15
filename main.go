@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/GesaXB/LibayGoManagement/config"
+	"github.com/GesaXB/LibayGoManagement/models"
 	"github.com/GesaXB/LibayGoManagement/routes"
 	"github.com/gin-gonic/gin"
 )
@@ -16,6 +17,7 @@ func main() {
 		log.Fatalf("failed to connect Database: %v", err)
 	}
 
+	db.AutoMigrate(&models.User{}, &models.Author{}, &models.Category{}, &models.Book{}, &models.Borrow{})
 	routes.SetupRoutes(server, db)
 
 	PORT := os.Getenv("PORT")
