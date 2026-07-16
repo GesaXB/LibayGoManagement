@@ -3,24 +3,25 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/GesaXB/LibayGoManagement/dto"
+	requestdto "github.com/GesaXB/LibayGoManagement/dto/requestDto"
+	responsedto "github.com/GesaXB/LibayGoManagement/dto/responseDto"
 	"github.com/GesaXB/LibayGoManagement/services"
 	"github.com/gin-gonic/gin"
 )
 
-type AuthController struct {
+type authController struct {
 	service services.AuthService
 }
 
-func NewAuthController(service services.AuthService) *AuthController {
-	return &AuthController{
+func NewAuthController(service services.AuthService) *authController {
+	return &authController{
 		service: service,
 	}
 }
 
-func (c *AuthController) Register(ctx *gin.Context) {
+func (c *authController) Register(ctx *gin.Context) {
 
-	var req dto.RegisterRequest
+	var req requestdto.RegisterRequest
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -43,9 +44,9 @@ func (c *AuthController) Register(ctx *gin.Context) {
 	})
 }
 
-func (c *AuthController) Login(ctx *gin.Context) {
+func (c *authController) Login(ctx *gin.Context) {
 
-	var req dto.LoginRequest
+	var req requestdto.LoginRequest
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -62,7 +63,7 @@ func (c *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, dto.AuthResponse{
+	ctx.JSON(http.StatusOK, responsedto.AuthResponse{
 		Token: token,
 	})
 }

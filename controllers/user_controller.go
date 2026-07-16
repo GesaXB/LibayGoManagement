@@ -9,15 +9,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserController struct {
+type userController struct {
 	services services.UserService
 }
 
-func NewUserController(c services.UserService) *UserController {
-	return &UserController{c}
+func NewUserController(c services.UserService) *userController {
+	return &userController{c}
 }
 
-func (c UserController) GetAll(ctx *gin.Context) {
+func (c userController) GetAll(ctx *gin.Context) {
 	users, err := c.services.GetAll()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -29,7 +29,7 @@ func (c UserController) GetAll(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, users)
 }
 
-func (c *UserController) GetById(ctx *gin.Context) {
+func (c *userController) GetById(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 
 	id, err := strconv.ParseUint(idParam, 10, 2)

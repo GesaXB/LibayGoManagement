@@ -3,7 +3,7 @@ package services
 import (
 	"errors"
 
-	"github.com/GesaXB/LibayGoManagement/dto"
+	requestdto "github.com/GesaXB/LibayGoManagement/dto/requestDto"
 	"github.com/GesaXB/LibayGoManagement/models"
 	"github.com/GesaXB/LibayGoManagement/repositories"
 	"github.com/GesaXB/LibayGoManagement/utils"
@@ -11,8 +11,8 @@ import (
 )
 
 type AuthService interface {
-	Register(req dto.RegisterRequest) (string, error)
-	Login(req dto.LoginRequest) (string, error)
+	Register(req requestdto.RegisterRequest) (string, error)
+	Login(req requestdto.LoginRequest) (string, error)
 }
 
 type authService struct {
@@ -25,7 +25,7 @@ func NewAuthService(repo repositories.UserRepository) AuthService {
 	}
 }
 
-func (s *authService) Register(req dto.RegisterRequest) (string, error) {
+func (s *authService) Register(req requestdto.RegisterRequest) (string, error) {
 
 	user, err := s.repo.FindByEmail(req.Email)
 
@@ -60,7 +60,7 @@ func (s *authService) Register(req dto.RegisterRequest) (string, error) {
 	return token, nil
 }
 
-func (s *authService) Login(req dto.LoginRequest) (string, error) {
+func (s *authService) Login(req requestdto.LoginRequest) (string, error) {
 
 	user, err := s.repo.FindByEmail(req.Email)
 	if err != nil {

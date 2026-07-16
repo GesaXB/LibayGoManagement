@@ -19,6 +19,10 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	userService := services.NewUserService(&userRepo)
 	userController := controllers.NewUserController(userService)
 
+	categoryRepo := repositories.NewCategoryRepository(db)
+	categoryService := services.NewCategoryService(categoryRepo)
+	categoryController := controllers.NewCategoryController(categoryService)
+
 	auth := r.Group("/auth")
 	{
 		auth.POST("/register", authController.Register)
@@ -29,6 +33,8 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	{
 		api.GET("/users", userController.GetAll)
 		api.GET("/user/:id", userController.GetById)
+
+		api.GET("/categories", categoryController.GetAll)
 	}
 
 	r.GET("/", func(c *gin.Context) {
