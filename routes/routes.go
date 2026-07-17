@@ -35,6 +35,8 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		api.GET("/user/:id", userController.GetById)
 
 		api.GET("/categories", categoryController.GetAll)
+		api.GET("/category/:id", categoryController.GetById)
+		api.POST("/categories", categoryController.Create)
 	}
 
 	r.GET("/", func(c *gin.Context) {

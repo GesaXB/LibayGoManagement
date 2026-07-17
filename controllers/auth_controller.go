@@ -55,7 +55,7 @@ func (c *authController) Login(ctx *gin.Context) {
 		return
 	}
 
-	token, err := c.service.Login(req)
+	token, user, err := c.service.Login(req)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"message": err.Error(),
@@ -65,5 +65,10 @@ func (c *authController) Login(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, responsedto.AuthResponse{
 		Token: token,
+		User: responsedto.UserResponse{
+			ID:    user.Id,
+			Name:  user.Name,
+			Email: user.Email,
+		},
 	})
 }

@@ -1,13 +1,13 @@
 package services
 
 import (
-	"github.com/GesaXB/LibayGoManagement/models"
+	responsedto "github.com/GesaXB/LibayGoManagement/dto/responseDto"
 	"github.com/GesaXB/LibayGoManagement/repositories"
 )
 
 type UserService interface {
-	GetAll() ([]models.User, error)
-	GetById(id uint) (models.User, error)
+	GetAll() ([]responsedto.UserResponse, error)
+	GetById(id uint) (responsedto.UserResponse, error)
 }
 
 type userService struct {
@@ -18,12 +18,35 @@ func NewUserService(r *repositories.UserRepository) UserService {
 	return &userService{*r}
 }
 
-func (s *userService) GetAll() ([]models.User, error) {
-	user, err := s.repo.FindAll()
-	return user, err
+func (s *userService) GetAll() ([]responsedto.UserResponse, error) {
+	users, err := s.repo.FindAll()
+	if err != nil {
+		return nil, err
+	}
+
+	responses := make([]responsedto.UserResponse, 0, len(users))
+	for _, user := range users {
+		responses = append(responses, responsedto.UserResponse{
+			ID:    user.Id,
+			Name:  user.Name,
+			Email: user.Email,
+		})
+	}
+
+	return responses, nil
 }
 
-func (s *userService) GetById(id uint) (models.User, error) {
+func (s *userService) GetById(id uint) (responsedto.UserResponse, error) {
 	user, err := s.repo.FindById(id)
-	return user, err
+	if err != nil {
+		return responsedto.UserResponse{}, err
+	}
+
+	response := responsedto.UserResponse{
+		ID:    user.Id,
+		Name:  user.Name,
+		Email: user.Email,
+	}
+
+	return response, nil
 }

@@ -12,7 +12,7 @@ import (
 
 type AuthService interface {
 	Register(req requestdto.RegisterRequest) (string, error)
-	Login(req requestdto.LoginRequest) (string, error)
+	Login(req requestdto.LoginRequest) (string, *models.User, error)
 }
 
 type authService struct {
@@ -60,21 +60,21 @@ func (s *authService) Register(req requestdto.RegisterRequest) (string, error) {
 	return token, nil
 }
 
-func (s *authService) Login(req requestdto.LoginRequest) (string, error) {
+func (s *authService) Login(req requestdto.LoginRequest) (string, *models.User, error) {
 
 	user, err := s.repo.FindByEmail(req.Email)
 	if err != nil {
-		return "", errors.New("email atau password salah")
+		return "", nil, errors.New("email atau password salah")
 	}
 
 	if err := utils.CheckPassword(req.Password, user.Password); err != nil {
-		return "", errors.New("email atau password salah")
+		return "", nil, errors.New("email atau password salah")
 	}
 
 	token, err := utils.GenerateToken(user.Id, user.Email)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
-	return token, nil
+	return token, user, nil
 }
