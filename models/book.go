@@ -2,15 +2,15 @@ package models
 
 type Book struct {
 	BaseModel
-	Title       string `gorm:"not null;size:255"`
+	Title       string `gorm:"not null;size:255;unique"`
 	Isbnd       string `gorm:"not null"`
 	Description string `gorm:"type:text"`
 	Stock       uint   `gorm:"default:0"`
 
-	AuthorId uint `json:"author_id"`
+	AuthorId string `json:"author_id"`
 	Author   Author
 
-	CategoryId uint `json:"category_id"`
+	CategoryId string `json:"category_id"`
 	Category   Category
 
 	Borrows []Borrow `gorm:"foreignKey:BookId"`

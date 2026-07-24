@@ -2,12 +2,11 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
 
 	requestdto "github.com/GesaXB/LibayGoManagement/dto/requestDto"
 	"github.com/GesaXB/LibayGoManagement/services"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
+	"github.com/google/uuid"
 )
 
 type BookController struct {
@@ -28,17 +27,12 @@ func (c *BookController) GetAllBooks(ctx *gin.Context) {
 }
 
 func (c *BookController) GetBookById(ctx *gin.Context) {
-	idParam := ctx.Param("id")
-	id, err := strconv.ParseUint(idParam, 10, 32)
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			ctx.JSON(http.StatusNotFound, gin.H{"error": "Book not found"})
-			return
-		}
+	id := ctx.Param("id")
+	if _, err := uuid.Parse(id); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid book ID"})
 		return
 	}
-	book, err := c.service.GetBookById(uint(id))
+	book, err := c.service.GetBookById(id)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

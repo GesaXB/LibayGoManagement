@@ -7,7 +7,7 @@ import (
 
 type BookRepository interface {
 	GetAllBooks() ([]models.Book, error)
-	GetById(id uint) (models.Book, error)
+	GetById(id string) (models.Book, error)
 	Create(*models.Book) error
 }
 
@@ -21,16 +21,16 @@ func NewBookRepository(db *gorm.DB) BookRepository {
 
 func (r *bookRepository) GetAllBooks() ([]models.Book, error) {
 	var books []models.Book
-	err := r.db.Find(&books).Error
+	err := r.db.Preload("Author").Preload("Category").Find(&books).Error
 	if err != nil {
 		return nil, err
 	}
 	return books, nil
 }
 
-func (r *bookRepository) GetById(id uint) (models.Book, error) {
+func (r *bookRepository) GetById(id string) (models.Book, error) {
 	var book models.Book
-	err := r.db.First(&book, id).Error
+	err := r.db.Preload("Author").Preload("Category").First(&book, "id = ?", id).Error
 	if err != nil {
 		return models.Book{}, err
 	}

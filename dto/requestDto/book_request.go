@@ -5,6 +5,6 @@ type BookRequest struct {
 	Isbnd       string `json:"isbnd" binding:"required"`
 	Description string `json:"description"`
 	Stock       uint   `json:"stock"`
-	AuthorId    uint   `json:"author_id" binding:"required"`
-	CategoryId  uint   `json:"category_id" binding:"required"`
+	AuthorId    string `json:"author_id" binding:"required"`
+	CategoryId  string `json:"category_id" binding:"required"`
 }

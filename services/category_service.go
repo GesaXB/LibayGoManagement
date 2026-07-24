@@ -9,9 +9,9 @@ import (
 
 type CategoryService interface {
 	GetAll() ([]responsedto.CategoryRespone, error)
-	GetById(id uint) (responsedto.CategoryRespone, error)
+	GetById(id string) (responsedto.CategoryRespone, error)
 	Create(req requestdto.CategoryRequest) (responsedto.CategoryRespone, error)
-	Update(id uint, req requestdto.UpdateCategoryRequest) (responsedto.CategoryRespone, error)
+	Update(id string, req requestdto.UpdateCategoryRequest) (responsedto.CategoryRespone, error)
 }
 
 type categoryService struct {
@@ -40,7 +40,7 @@ func (s categoryService) GetAll() ([]responsedto.CategoryRespone, error) {
 	return responses, nil
 }
 
-func (s categoryService) GetById(id uint) (responsedto.CategoryRespone, error) {
+func (s categoryService) GetById(id string) (responsedto.CategoryRespone, error) {
 	category, err := s.repo.FindById(id)
 	if err != nil {
 		return responsedto.CategoryRespone{}, err
@@ -69,7 +69,7 @@ func (s categoryService) Create(req requestdto.CategoryRequest) (responsedto.Cat
 	return res, err
 }
 
-func (s categoryService) Update(id uint, req requestdto.UpdateCategoryRequest) (responsedto.CategoryRespone, error) {
+func (s categoryService) Update(id string, req requestdto.UpdateCategoryRequest) (responsedto.CategoryRespone, error) {
 	category, err := s.repo.FindById(id)
 	if err != nil {
 		return responsedto.CategoryRespone{}, err

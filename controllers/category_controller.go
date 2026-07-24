@@ -2,11 +2,11 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
 
 	requestdto "github.com/GesaXB/LibayGoManagement/dto/requestDto"
 	"github.com/GesaXB/LibayGoManagement/services"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -31,16 +31,15 @@ func (c categoryController) GetAll(ctx *gin.Context) {
 }
 
 func (c categoryController) GetById(ctx *gin.Context) {
-	idParam := ctx.Param("id")
-	id, err := strconv.ParseUint(idParam, 10, 2)
-	if err != nil {
+	id := ctx.Param("id")
+	if _, err := uuid.Parse(id); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "invalid id",
 		})
 		return
 	}
 
-	category, err := c.service.GetById(uint(id))
+	category, err := c.service.GetById(id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			ctx.JSON(http.StatusNotFound, gin.H{
@@ -80,11 +79,12 @@ func (c categoryController) Create(ctx *gin.Context) {
 func (c categoryController) Update(ctx *gin.Context) {
 	var req requestdto.UpdateCategoryRequest
 
-	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
-	if err != nil {
+	id := ctx.Param("id")
+	if _, err := uuid.Parse(id); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "invalid id",
 		})
+		return
 	}
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -94,7 +94,7 @@ func (c categoryController) Update(ctx *gin.Context) {
 		return
 	}
 
-	updateCategory, err := c.service.Update(uint(id), req)
+	updateCategory, err := c.service.Update(id, req)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),

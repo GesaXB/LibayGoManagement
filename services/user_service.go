@@ -7,7 +7,7 @@ import (
 
 type UserService interface {
 	GetAll() ([]responsedto.UserResponse, error)
-	GetById(id uint) (responsedto.UserResponse, error)
+	GetById(id string) (responsedto.UserResponse, error)
 }
 
 type userService struct {
@@ -38,7 +38,7 @@ func (s *userService) GetAll() ([]responsedto.UserResponse, error) {
 	return responses, nil
 }
 
-func (s *userService) GetById(id uint) (responsedto.UserResponse, error) {
+func (s *userService) GetById(id string) (responsedto.UserResponse, error) {
 	user, err := s.repo.FindById(id)
 	if err != nil {
 		return responsedto.UserResponse{}, err

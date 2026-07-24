@@ -9,9 +9,9 @@ import (
 
 type AuthorService interface {
 	GetAll() ([]responsedto.AuthorResponse, error)
-	GetById(id uint) (responsedto.AuthorResponse, error)
+	GetById(id string) (responsedto.AuthorResponse, error)
 	Create(req requestdto.AuthorRequest) (responsedto.AuthorResponse, error)
-	Update(id uint, req requestdto.AuthorRequest) (responsedto.AuthorResponse, error)
+	Update(id string, req requestdto.AuthorRequest) (responsedto.AuthorResponse, error)
 }
 
 type authorService struct {
@@ -33,6 +33,7 @@ func (s authorService) GetAll() ([]responsedto.AuthorResponse, error) {
 	response := make([]responsedto.AuthorResponse, 0, len(authors))
 	for _, author := range authors {
 		response = append(response, responsedto.AuthorResponse{
+			Id:   author.Id,
 			Name: author.Name,
 			Bio:  author.Bio,
 		})
@@ -41,13 +42,14 @@ func (s authorService) GetAll() ([]responsedto.AuthorResponse, error) {
 	return response, nil
 }
 
-func (s authorService) GetById(id uint) (responsedto.AuthorResponse, error) {
+func (s authorService) GetById(id string) (responsedto.AuthorResponse, error) {
 	author, err := s.repo.FindById(id)
 	if err != nil {
 		return responsedto.AuthorResponse{}, err
 	}
 
 	response := responsedto.AuthorResponse{
+		Id:   author.Id,
 		Name: author.Name,
 		Bio:  author.Bio,
 	}
@@ -63,6 +65,7 @@ func (s authorService) Create(req requestdto.AuthorRequest) (responsedto.AuthorR
 
 	err := s.repo.Create(&newAuthor)
 	res := responsedto.AuthorResponse{
+		Id:   newAuthor.Id,
 		Name: newAuthor.Name,
 		Bio:  newAuthor.Bio,
 	}
@@ -70,7 +73,7 @@ func (s authorService) Create(req requestdto.AuthorRequest) (responsedto.AuthorR
 	return res, err
 }
 
-func (s authorService) Update(id uint, req requestdto.AuthorRequest) (responsedto.AuthorResponse, error) {
+func (s authorService) Update(id string, req requestdto.AuthorRequest) (responsedto.AuthorResponse, error) {
 	auhtor, err := s.repo.FindById(id)
 	if err != nil {
 		return responsedto.AuthorResponse{}, err

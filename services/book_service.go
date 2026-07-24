@@ -9,7 +9,7 @@ import (
 
 type BookService interface {
 	GetAllBooks() ([]responsedto.BookResponse, error)
-	GetBookById(id uint) (responsedto.BookResponse, error)
+	GetBookById(id string) (responsedto.BookResponse, error)
 	CreateBook(book requestdto.BookRequest) (responsedto.BookResponse, error)
 }
 
@@ -47,7 +47,7 @@ func (s *bookService) GetAllBooks() ([]responsedto.BookResponse, error) {
 	return responses, nil
 }
 
-func (s *bookService) GetBookById(id uint) (responsedto.BookResponse, error) {
+func (s *bookService) GetBookById(id string) (responsedto.BookResponse, error) {
 	book, err := s.repo.GetById(id)
 	if err != nil {
 		return responsedto.BookResponse{}, err
@@ -75,17 +75,34 @@ func (s *bookService) CreateBook(book requestdto.BookRequest) (responsedto.BookR
 		Isbnd:       book.Isbnd,
 		Description: book.Description,
 		Stock:       book.Stock,
+		AuthorId:    book.AuthorId,
+		CategoryId:  book.CategoryId,
 	}
 	err := s.repo.Create(&bookModel)
 	if err != nil {
 		return responsedto.BookResponse{}, err
 	}
+
+	createdBook, err := s.repo.GetById(bookModel.Id)
+	if err != nil {
+		return responsedto.BookResponse{}, err
+	}
+
 	response := responsedto.BookResponse{
-		ID:          bookModel.Id,
-		Title:       bookModel.Title,
-		Isbnd:       bookModel.Isbnd,
-		Description: bookModel.Description,
-		Stock:       bookModel.Stock,
+		ID:          createdBook.Id,
+		Title:       createdBook.Title,
+		Isbnd:       createdBook.Isbnd,
+		Description: createdBook.Description,
+		Stock:       createdBook.Stock,
+		Author: responsedto.AuthorResponse{
+			Id:   createdBook.AuthorId,
+			Name: createdBook.Author.Name,
+			Bio:  createdBook.Author.Bio,
+		},
+		Category: responsedto.CategoryRespone{
+			Id:   createdBook.CategoryId,
+			Name: createdBook.Category.Name,
+		},
 	}
 	return response, nil
 }

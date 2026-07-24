@@ -72,3 +72,9 @@ func (c *authController) Login(ctx *gin.Context) {
 		},
 	})
 }
+
+func (c *authController) Me(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "token valid",
+	})
+}

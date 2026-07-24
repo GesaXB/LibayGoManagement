@@ -1,7 +1,7 @@
 package responsedto
 
 type BookResponse struct {
-	ID          uint            `json:"id"`
+	ID          string          `json:"id"`
 	Title       string          `json:"title"`
 	Isbnd       string          `json:"isbnd"`
 	Description string          `json:"description"`

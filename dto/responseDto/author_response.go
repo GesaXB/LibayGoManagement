@@ -1,7 +1,7 @@
 package responsedto
 
 type AuthorResponse struct {
-	Id   uint   `json:"id"`
+	Id   string `json:"id"`
 	Name string `json:"name"`
 	Bio  string `json:"bio"`
 }

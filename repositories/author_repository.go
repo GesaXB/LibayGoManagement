@@ -7,7 +7,7 @@ import (
 
 type AuthorRepository interface {
 	FindAll() ([]models.Author, error)
-	FindById(id uint) (models.Author, error)
+	FindById(id string) (models.Author, error)
 	Create(author *models.Author) error
 	Update(author *models.Author) error
 }
@@ -31,9 +31,9 @@ func (r authorRepository) FindAll() ([]models.Author, error) {
 	return authors, err
 }
 
-func (r authorRepository) FindById(id uint) (models.Author, error) {
+func (r authorRepository) FindById(id string) (models.Author, error) {
 	var author models.Author
-	err := r.db.First(id, &author).Error
+	err := r.db.First(&author, "id = ?", id).Error
 	if err != nil {
 		return models.Author{}, err
 	}

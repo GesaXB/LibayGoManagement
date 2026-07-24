@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/GesaXB/LibayGoManagement/services"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -30,17 +30,15 @@ func (c userController) GetAll(ctx *gin.Context) {
 }
 
 func (c *userController) GetById(ctx *gin.Context) {
-	idParam := ctx.Param("id")
-
-	id, err := strconv.ParseUint(idParam, 10, 2)
-	if err != nil {
+	id := ctx.Param("id")
+	if _, err := uuid.Parse(id); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "invalid id",
 		})
 		return
 	}
 
-	user, err := c.services.GetById(uint(id))
+	user, err := c.services.GetById(id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			ctx.JSON(http.StatusNotFound, gin.H{

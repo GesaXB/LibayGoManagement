@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/GesaXB/LibayGoManagement/controllers"
+	"github.com/GesaXB/LibayGoManagement/middlewares"
 	"github.com/GesaXB/LibayGoManagement/repositories"
 	"github.com/GesaXB/LibayGoManagement/services"
 	"github.com/gin-gonic/gin"
@@ -35,26 +36,29 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	{
 		auth.POST("/register", authController.Register)
 		auth.POST("/login", authController.Login)
+		auth.GET("/me", middlewares.JWTAuth(), authController.Me)
 	}
 
 	api := r.Group("/api")
+	api.Use(middlewares.JWTAuth())
 	{
 		api.GET("/users", userController.GetAll)
-		api.GET("/user/:id", userController.GetById)
+		api.GET("/users/:id", userController.GetById)
 
 		api.GET("/categories", categoryController.GetAll)
-		api.GET("/category/:id", categoryController.GetById)
+		api.GET("/categories/:id", categoryController.GetById)
 		api.POST("/categories", categoryController.Create)
-		api.PUT("/category/:id", categoryController.Update)
-		api.PATCH("/category/:id", categoryController.Update)
+		api.PUT("/categories/:id", categoryController.Update)
+		api.PATCH("/categories/:id", categoryController.Update)
 
 		api.GET("/authors", authorController.GetAll)
-		api.GET("/author/:id", authorController.GetById)
-		api.PATCH("/author/:id", authorController.Update)
-		api.PUT("/author/:id", authorController.Update)
+		api.GET("/authors/:id", authorController.GetById)
+		api.POST("/authors", authorController.Create)
+		api.PATCH("/authors/:id", authorController.Update)
+		api.PUT("/authors/:id", authorController.Update)
 
 		api.GET("/books", bookController.GetAllBooks)
-		api.GET("/book/:id", bookController.GetBookById)
+		api.GET("/books/:id", bookController.GetBookById)
 		api.POST("/books", bookController.CreateBook)
 	}
 

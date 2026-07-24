@@ -2,11 +2,11 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
 
 	requestdto "github.com/GesaXB/LibayGoManagement/dto/requestDto"
 	"github.com/GesaXB/LibayGoManagement/services"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -32,13 +32,13 @@ func (c authorController) GetAll(ctx *gin.Context) {
 }
 
 func (c authorController) GetById(ctx *gin.Context) {
-	idParam := ctx.Param(":id")
-	id, err := strconv.ParseUint(idParam, 10, 2)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+	id := ctx.Param("id")
+	if _, err := uuid.Parse(id); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "invalid id"})
+		return
 	}
 
-	author, err := c.service.GetById(uint(id))
+	author, err := c.service.GetById(id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			ctx.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
@@ -69,24 +69,19 @@ func (c *authorController) Create(ctx *gin.Context) {
 func (c *authorController) Update(ctx *gin.Context) {
 	var input requestdto.AuthorRequest
 
-	idParam := ctx.Param(":id")
-	id, err := strconv.ParseUint(idParam, 10, 2)
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			ctx.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
-			return
-		}
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+	id := ctx.Param("id")
+	if _, err := uuid.Parse(id); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "invalid id"})
 		return
 	}
 
-	err = ctx.ShouldBindJSON(&input)
+	err := ctx.ShouldBindJSON(&input)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
-	authorUpdated, err := c.service.Update(uint(id), input)
+	authorUpdated, err := c.service.Update(id, input)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
