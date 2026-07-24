@@ -9,6 +9,7 @@ type CategoryRepository interface {
 	FindAll() ([]models.Category, error)
 	FindById(id uint) (models.Category, error)
 	Create(category *models.Category) error
+	Update(category *models.Category) error
 }
 
 type categoryRepository struct {
@@ -42,5 +43,10 @@ func (r categoryRepository) FindById(id uint) (models.Category, error) {
 
 func (r categoryRepository) Create(category *models.Category) error {
 	err := r.db.Create(category).Error
+	return err
+}
+
+func (r categoryRepository) Update(category *models.Category) error {
+	err := r.db.Save(category).Error
 	return err
 }

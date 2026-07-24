@@ -10,18 +10,21 @@ import (
 type CategoryService interface {
 	GetAll() ([]responsedto.CategoryRespone, error)
 	GetById(id uint) (responsedto.CategoryRespone, error)
-	Create(category requestdto.CategoryRequest) (responsedto.CategoryRespone, error)
+	Create(req requestdto.CategoryRequest) (responsedto.CategoryRespone, error)
+	Update(id uint, req requestdto.UpdateCategoryRequest) (responsedto.CategoryRespone, error)
 }
 
-type categoryRepository struct {
+type categoryService struct {
 	repo repositories.CategoryRepository
 }
 
 func NewCategoryService(r repositories.CategoryRepository) CategoryService {
-	return &categoryRepository{r}
+	return &categoryService{
+		repo: r,
+	}
 }
 
-func (s categoryRepository) GetAll() ([]responsedto.CategoryRespone, error) {
+func (s categoryService) GetAll() ([]responsedto.CategoryRespone, error) {
 	categories, err := s.repo.FindAll()
 	if err != nil {
 		return nil, err
@@ -37,7 +40,7 @@ func (s categoryRepository) GetAll() ([]responsedto.CategoryRespone, error) {
 	return responses, nil
 }
 
-func (s categoryRepository) GetById(id uint) (responsedto.CategoryRespone, error) {
+func (s categoryService) GetById(id uint) (responsedto.CategoryRespone, error) {
 	category, err := s.repo.FindById(id)
 	if err != nil {
 		return responsedto.CategoryRespone{}, err
@@ -51,7 +54,7 @@ func (s categoryRepository) GetById(id uint) (responsedto.CategoryRespone, error
 	return response, nil
 }
 
-func (s categoryRepository) Create(req requestdto.CategoryRequest) (responsedto.CategoryRespone, error) {
+func (s categoryService) Create(req requestdto.CategoryRequest) (responsedto.CategoryRespone, error) {
 
 	newCategory := models.Category{
 		Name: req.Name,
@@ -64,4 +67,18 @@ func (s categoryRepository) Create(req requestdto.CategoryRequest) (responsedto.
 	}
 
 	return res, err
+}
+
+func (s categoryService) Update(id uint, req requestdto.UpdateCategoryRequest) (responsedto.CategoryRespone, error) {
+	category, err := s.repo.FindById(id)
+	if err != nil {
+		return responsedto.CategoryRespone{}, err
+	}
+
+	category.Name = req.Name
+	res := responsedto.CategoryRespone{
+		Id:   category.Id,
+		Name: category.Name,
+	}
+	return res, nil
 }

@@ -14,8 +14,10 @@ type userService struct {
 	repo repositories.UserRepository
 }
 
-func NewUserService(r *repositories.UserRepository) UserService {
-	return &userService{*r}
+func NewUserService(r repositories.UserRepository) UserService {
+	return &userService{
+		repo: r,
+	}
 }
 
 func (s *userService) GetAll() ([]responsedto.UserResponse, error) {

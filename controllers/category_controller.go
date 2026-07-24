@@ -76,3 +76,30 @@ func (c categoryController) Create(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, category)
 }
+
+func (c categoryController) Update(ctx *gin.Context) {
+	var req requestdto.UpdateCategoryRequest
+
+	id, err := strconv.ParseUint(ctx.Param("id"), 10, 32)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "invalid id",
+		})
+	}
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	updateCategory, err := c.service.Update(uint(id), req)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+	}
+
+	ctx.JSON(http.StatusOK, updateCategory)
+}

@@ -16,12 +16,20 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	authService := services.NewAuthService(userRepo)
 	authController := controllers.NewAuthController(authService)
 
-	userService := services.NewUserService(&userRepo)
+	userService := services.NewUserService(userRepo)
 	userController := controllers.NewUserController(userService)
 
 	categoryRepo := repositories.NewCategoryRepository(db)
 	categoryService := services.NewCategoryService(categoryRepo)
 	categoryController := controllers.NewCategoryController(categoryService)
+
+	authorRepo := repositories.NewAuthorRepository(db)
+	authorService := services.NewAuthorService(authorRepo)
+	authorController := controllers.NewAuthorController(authorService)
+
+	bookRepo := repositories.NewBookRepository(db)
+	bookService := services.NewBookService(bookRepo)
+	bookController := controllers.NewBookController(bookService)
 
 	auth := r.Group("/auth")
 	{
@@ -37,6 +45,17 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		api.GET("/categories", categoryController.GetAll)
 		api.GET("/category/:id", categoryController.GetById)
 		api.POST("/categories", categoryController.Create)
+		api.PUT("/category/:id", categoryController.Update)
+		api.PATCH("/category/:id", categoryController.Update)
+
+		api.GET("/authors", authorController.GetAll)
+		api.GET("/author/:id", authorController.GetById)
+		api.PATCH("/author/:id", authorController.Update)
+		api.PUT("/author/:id", authorController.Update)
+
+		api.GET("/books", bookController.GetAllBooks)
+		api.GET("/book/:id", bookController.GetBookById)
+		api.POST("/books", bookController.CreateBook)
 	}
 
 	r.GET("/", func(c *gin.Context) {
